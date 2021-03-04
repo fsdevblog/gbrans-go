@@ -1,50 +1,26 @@
-package main
+package lesson2
 
 import (
 	"bufio"
 	"fmt"
 	"math"
 	"os"
-	"strconv"
-	"strings"
 )
 
-// Напишите программу, вычисляющую диаметр и длину окружности по заданной площади круга. Площадь круга должна вводиться пользователем с клавиатуры.
+// Напишите программу, вычисляющую диаметр и длину окружности по заданной площади круга.
+// Площадь круга должна вводиться пользователем с клавиатуры.
 
-func main() {
+func DiAndLengthOfCircle() {
 	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Printf("Площадь круга:\t")
-		s, _ := readInput2(reader)
 
-		radius := math.Sqrt(s / math.Pi)
+	fmt.Printf("Circle area:\t")
 
-		di := radius * 2
-		length := 2 * math.Pi * radius
+	s, _ := ReadFloat64(reader)
 
-		fmt.Printf("Длина окружности:\t%.4f\nДиаметр окружности: \t%.4f %f\n\n", length, di, radius)
-		fmt.Printf("More? (y/n):\t")
+	radius := math.Sqrt(s / math.Pi)
 
-		var agree string
-		_, _ = fmt.Scan(&agree)
+	di := radius * 2
+	length := 2 * math.Pi * radius
 
-		if agree == "y" || agree == "yes" {
-			continue
-		}
-
-		break
-	}
-
-}
-
-/*
-Не разбирался еще с package, IDE ругается на дублирование функции из 1.go
-поэтому дал название readInput2
-*/
-
-func readInput2(reader *bufio.Reader) (float64, error) {
-	str, _ := reader.ReadString('\n')
-	str = strings.ReplaceAll(str, ",", ".")
-	str = strings.ReplaceAll(str, "\n", "")
-	return strconv.ParseFloat(str, 32)
+	fmt.Printf("Circumference:\t%.4f\nCircle diameter : \t%.4f\n", length, di)
 }
