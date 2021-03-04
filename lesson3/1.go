@@ -1,4 +1,4 @@
-package main
+package lesson3
 
 import (
 	"bufio"
@@ -27,9 +27,6 @@ type Expression struct {
 	secondOperator float64
 }
 
-func (e *Expression) toString() string {
-	return fmt.Sprintf("%f %s %f", e.firstOperator, e.operand, e.secondOperator)
-}
 
 func (e *Expression) calc() (float64, error) {
 	switch e.operand {
@@ -48,33 +45,34 @@ func (e *Expression) calc() (float64, error) {
 	}
 }
 
-func main() {
+// Чистим ввод от левых символов и подготавливаем выражение к парсингу
+func normalizeInput(str string) string {
+	clean := regexp.MustCompile(`[^\d\+\-/\*\.]`).ReplaceAll([]byte(str), []byte(""))
+	clean = regexp.MustCompile(`([\+\-/\*])`).ReplaceAll(clean, []byte(" $1 "))
+	clean = regexp.MustCompile(`\s\s+`).ReplaceAll(clean, []byte(" "))
+
+	return strings.ReplaceAll(string(clean), "* *", "**")
+}
+
+func PromptCalculator() {
 	reader := bufio.NewReader(os.Stdin)
 
-	for {
-		fmt.Println("Please input expression:")
-		input, err := reader.ReadString('\n')
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			continue
-		}
-		normalizeInput(&input)
-		result, err := calculate(input)
+	fmt.Println("Please input expression:")
 
-		if err != nil {
-			fmt.Printf("Error: %v\n", err)
-			break
-		}
-		fmt.Printf("RESULT: %s\n", result)
-		fmt.Printf("More? (y/n):\t")
-		var agree string
-		_, _ = fmt.Scan(&agree)
+	input, err := reader.ReadString('\n')
 
-		if agree == "y" || agree == "yes" {
-			continue
-		}
-		break
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
 	}
+
+	result, err := calculate(normalizeInput(input))
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+	fmt.Printf("RESULT: %s\n", result)
 }
 
 func calculate(str string) (string, error) {
@@ -96,10 +94,12 @@ func calculate(str string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
 	secondOp, err := strconv.ParseFloat(parts[2], 64)
 	if err != nil {
 		return "", err
 	}
+
 	expression := Expression{
 		operand:        parts[1],
 		firstOperator:  firstOp,
@@ -109,14 +109,8 @@ func calculate(str string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	newString := strings.Replace(str, parts[0]+" "+parts[1]+" "+parts[2], fmt.Sprintf("%f", result), 1)
-	return calculate(newString)
-}
 
-// Чистим ввод от левых символов и подготавливаем выражение к парсингу
-func normalizeInput(str *string) {
-	clean := regexp.MustCompile(`[^\d\+\-/\*\.]`).ReplaceAll([]byte(*str), []byte(""))
-	clean = regexp.MustCompile(`([\+\-/\*])`).ReplaceAll(clean, []byte(" $1 "))
-	res := regexp.MustCompile(`\s\s+`).ReplaceAll(clean, []byte(" "))
-	*str = strings.ReplaceAll(string(res), "* *", "**")
+	newString := strings.Replace(str, parts[0]+" "+parts[1]+" "+parts[2], fmt.Sprintf("%f", result), 1)
+
+	return calculate(newString)
 }
