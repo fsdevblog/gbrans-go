@@ -1,4 +1,4 @@
-package main
+package lesson2
 
 import (
 	"bufio"
@@ -8,35 +8,24 @@ import (
 	"strings"
 )
 
-// Напишите программу для вычисления площади прямоугольника. Длины сторон прямоугольника должны вводиться пользователем с клавиатуры.
-
-func main() {
+func RectangleArea() {
 	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Printf("Длина:\t")
-		length, _ := readInput(reader)
 
-		fmt.Printf("Ширина:\t")
-		width, _ := readInput(reader)
+	fmt.Printf("Length:\t")
 
-		fmt.Printf("Площадь:\t%.2f\n", length*width)
-		fmt.Printf("More? (y/n):\t")
+	length, _ := ReadFloat64(reader)
 
-		var agree string
-		_, _ = fmt.Scan(&agree)
+	fmt.Printf("Width:\t")
 
-		if agree == "y" || agree == "yes" {
-			continue
-		}
+	width, _ := ReadFloat64(reader)
 
-		break
-	}
-
+	fmt.Printf("Area:\t%.2f\n", length*width)
 }
 
-func readInput(reader *bufio.Reader) (float64, error) {
+func ReadFloat64(reader *bufio.Reader) (float64, error) {
 	str, _ := reader.ReadString('\n')
 	str = strings.ReplaceAll(str, ",", ".")
 	str = strings.ReplaceAll(str, "\n", "")
+
 	return strconv.ParseFloat(str, 32)
 }
