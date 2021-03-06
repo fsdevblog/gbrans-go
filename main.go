@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"gbrains-go/lesson2"
+	"gbrains-go/lesson4"
 	"gbrains-go/lib"
 	"os"
 
@@ -11,8 +12,13 @@ import (
 
 const (
 	LessonSecond = "Second lesson"
+	LessonFourth = "Fourth lesson"
 	Exit         = "Exit"
 	Back         = "Back"
+)
+
+const (
+	taskInjectionSort = "Injection Sort"
 )
 
 func selectPrompt(label string, items interface{}) (string, error) {
@@ -36,7 +42,7 @@ func catchPromptError(err error) {
 
 func main() {
 	for { // Lessons loop
-		lessonQ, err := selectPrompt("Choose the lesson", []string{LessonSecond, Exit})
+		lessonQ, err := selectPrompt("Choose the lesson", []string{LessonSecond, LessonFourth, Exit})
 
 		if err != nil {
 			catchPromptError(err)
@@ -44,8 +50,35 @@ func main() {
 
 		if lessonQ == LessonSecond {
 			secondLessonTasks()
+		} else if lessonQ == LessonFourth {
+			forthLessonTasks()
 		} else if lessonQ == Exit {
 			break
+		}
+	}
+}
+
+func forthLessonTasks() {
+	taskQ, err := selectPrompt("Choose the task", []string{taskInjectionSort, Back})
+
+	if err != nil {
+		catchPromptError(err)
+	}
+
+	taskLoop := true
+	for taskLoop { // tasks loop
+		switch taskQ {
+		case taskInjectionSort:
+			randomAry := lib.RandomAry(25)
+			fmt.Printf("Generated random ary %v\n", randomAry)
+			lesson4.InjectionSort(randomAry)
+			fmt.Printf("Sorted with Injection sort: %v\n", randomAry)
+		case Back:
+			taskLoop = false
+		}
+
+		if taskQ != Back && !lib.AskMore() {
+			taskLoop = false
 		}
 	}
 }
